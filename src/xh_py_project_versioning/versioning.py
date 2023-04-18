@@ -23,26 +23,30 @@ class SemVer:
     def set_pre_release(self, pre_release: str):
         self.pre_release = pre_release
 
+    def unset_pre_release(self):
+        self.set_pre_release(None)
+
     def increase_build(self):
-        self.build = 0 if self.build is None else self.build
+        self.build = 1 if self.build is None else self.build+1
 
     def set_build(self, build: Optional[int]):
         self.build = build
 
-    def is_not_dev(self):
-        return not self.is_dev()
+    def unset_build(self):
+        self.build = None
 
-    def is_dev(self):
+    def is_pre_release_not_set(self):
+        return not self.is_pre_release_set()
+
+    def is_pre_release_set(self):
         if self.pre_release is None:
             return False
-        elif self.pre_release == "dev":
-            return True
         else:
-            return False
+            return True
 
     def __str__(self):
         pre_release_str = f"-{self.pre_release}" if self.pre_release is not None else ""
-        build_str = f"-{self.build}" if self.build is not None else ""
+        build_str = f"+{self.build:03d}" if self.build is not None else ""
         return f"{self.major}.{self.minor}.{self.patch}{pre_release_str}{build_str}"
 
     def __repr__(self):

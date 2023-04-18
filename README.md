@@ -8,3 +8,8 @@ python -m build
 # api automate by following `-u __token__ -p {token / password}`
 python -m twine upload dist/*
 ```
+
+
+```shell
+PYTHONPATH=src python src/xh_py_project_versioning/__main__.py --project-file pyproject.toml --major -d
+```

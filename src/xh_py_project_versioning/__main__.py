@@ -28,6 +28,8 @@ if __name__ == '__main__':
     parser.add_argument("-r", "--release", action="store_true", default=False,
                         help="release with any build meta removed")
 
+    parser.add_argument("--pre-build-tag", type=str, default="dev")
+
 
     argv = parser.parse_args(sys.argv[1:])
     project_file = argv.project_file
@@ -35,6 +37,7 @@ if __name__ == '__main__':
         raise Exception(f"project-file[{project_file}] not exists")
 
     version_mod = argv.version_mod
+    pre_build_tag = argv.pre_build_tag
 
     py_project = PyProject.from_toml(project_file)
     version_str = py_project.get_version()
@@ -57,9 +60,10 @@ if __name__ == '__main__':
     old_version = str(sem_ver)
     op_tag = ""
     if argv.release:
-        py_project.update_version(sem_ver)
+        sem_ver.unset_build()
+        sem_ver.unset_pre_release()
         op_tag = "release"
-    elif sem_ver.is_not_dev():
+    elif sem_ver.is_pre_release_not_set():
         if version_mod == "major":
             sem_ver.increase_major()
         elif version_mod == "minor":
@@ -67,18 +71,21 @@ if __name__ == '__main__':
         elif version_mod == "patch":
             sem_ver.increase_patch()
 
-        sem_ver.set_pre_release("dev")
+        sem_ver.set_pre_release(pre_build_tag)
         sem_ver.set_build(0)
-        py_project.update_version(sem_ver)
         op_tag="dev start"
 
     else:
         sem_ver.increase_build()
-        py_project.update_version(sem_ver)
         op_tag="dev progress"
 
+    if argv.direct:
+        sem_ver.unset_pre_release()
+        sem_ver.set_build(None)
 
-    py_project.persist(project_file)
+        op_tag=f"{op_tag} - direct"
+
+    py_project.update_version(sem_ver).persist(project_file)
 
     Repo(".").git.add(project_file)
     print(f"[{op_tag}]{old_version} -> {str(sem_ver)}")
