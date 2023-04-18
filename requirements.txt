@@ -1,0 +1,4 @@
+build==0.10.0
+twine==4.0.2
+GitPython==3.1.31
+toml==0.10.2
