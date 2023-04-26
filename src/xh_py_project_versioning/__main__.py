@@ -60,14 +60,19 @@ if __name__ == '__main__':
     old_version = str(sem_ver)
     op_tag = ""
     if argv.release:
+        if sem_ver.build is None:
+            raise Exception(f"Version[{sem_ver}] is applicable for release due to build meta is empty")
         sem_ver.unset_build()
         sem_ver.unset_pre_release()
         op_tag = "release"
     elif sem_ver.is_pre_release_not_set():
         if version_mod == "major":
             sem_ver.increase_major()
+            sem_ver.minor = 0
+            sem_ver.patch = 0
         elif version_mod == "minor":
             sem_ver.increase_minor()
+            sem_ver.patch = 0
         elif version_mod == "patch":
             sem_ver.increase_patch()
 
