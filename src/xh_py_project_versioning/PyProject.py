@@ -1,6 +1,5 @@
-import toml
-
 from xh_py_project_versioning.versioning import SemVer
+import toml
 
 
 class PyProject:
