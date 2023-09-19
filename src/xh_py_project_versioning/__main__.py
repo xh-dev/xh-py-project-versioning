@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     argv = parser.parse_args(sys.argv[1:])
     project_file = argv.project_file
-    if not os.path.exists(project_file) and not os.path.is_file(project_file):
+    if not os.path.exists(project_file) and not os.path.isfile(project_file):
         raise Exception(f"project-file[{project_file}] not exists")
 
     version_mod = argv.version_mod
